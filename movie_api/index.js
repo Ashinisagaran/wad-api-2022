@@ -5,6 +5,8 @@ import moviesRouter from './api/movies';
 import genresRouter from './api/genre';
 import './seedData';
 import usersRouter from './api/users';
+import session from 'express-session';
+import authenticate from './authenticate';
 
 dotenv.config();
 
@@ -21,10 +23,19 @@ const errHandler = (err, req, res, next) => {
     res.status(500).send(`Hey!! You caught the error 👍👍. Here's the details: ${err.stack} `);
   };
 
+//session middleware
+app.use(session({
+    secret: 'ilikecake',
+    resave: true,
+    saveUninitialized: true
+  }));
+  
+
 app.use(express.json());
 
 //Movies router
-app.use('/api/movies', moviesRouter);
+//update /api/Movie route
+app.use('/api/movies', authenticate, moviesRouter);
 
 //Genres router
 app.use('/api/genres', genresRouter);
