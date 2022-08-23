@@ -6,7 +6,8 @@ import genresRouter from './api/genre';
 import './seedData';
 import usersRouter from './api/users';
 import session from 'express-session';
-import authenticate from './authenticate';
+// replace existing import with passport strategy​
+import passport from './authenticate';
 
 dotenv.config();
 
@@ -23,19 +24,15 @@ const errHandler = (err, req, res, next) => {
     res.status(500).send(`Hey!! You caught the error 👍👍. Here's the details: ${err.stack} `);
   };
 
-//session middleware
-app.use(session({
-    secret: 'ilikecake',
-    resave: true,
-    saveUninitialized: true
-  }));
+// replace app.use(session([... with the following:
+app.use(passport.initialize());
   
 
 app.use(express.json());
 
 //Movies router
-//update /api/Movie route
-app.use('/api/movies', authenticate, moviesRouter);
+// Add passport.authenticate(..)  to middleware stack for protected routes​
+app.use('/api/movies', passport.authenticate('jwt', {session: false}), moviesRouter);
 
 //Genres router
 app.use('/api/genres', genresRouter);
