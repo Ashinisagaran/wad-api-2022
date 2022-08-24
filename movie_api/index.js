@@ -1,4 +1,6 @@
 import './db';
+// replace existing import with passport strategy​
+import passport from './authenticate';
 import dotenv from 'dotenv';
 import express from 'express';
 import moviesRouter from './api/movies';
@@ -6,8 +8,7 @@ import genresRouter from './api/genre';
 import './seedData';
 import usersRouter from './api/users';
 import session from 'express-session';
-// replace existing import with passport strategy​
-import passport from './authenticate';
+
 
 dotenv.config();
 
@@ -32,7 +33,14 @@ app.use(express.json());
 
 //Movies router
 // Add passport.authenticate(..)  to middleware stack for protected routes​
+// app.use('/api/movies', moviesRouter);
 app.use('/api/movies', passport.authenticate('jwt', {session: false}), moviesRouter);
+
+//eyJhbGciOiJIUzI1NiJ9.dXNlcjE.FmYria8wq0aFDHnzYWhKQrhF5BkJbFNN1PqNyNQ7V4M :-
+// {
+//     "username": "user1",
+//     "password": "test1"
+// }
 
 //Genres router
 app.use('/api/genres', genresRouter);
