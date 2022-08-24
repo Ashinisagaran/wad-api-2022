@@ -25,24 +25,6 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-//Favourite
-//Add a favourite. No Error Handling Yet. Can add duplicates too!
-router.post('/:userName/favourites', asyncHandler(async (req, res) => {
-    const newFavourite = req.body.id;
-    const userName = req.params.userName;
-    const movie = await movieModel.findByMovieDBId(newFavourite);
-    const user = await User.findByUserName(userName);
-    await user.favourites.push(movie._id);
-    await user.save(); 
-    res.status(201).json(user); 
-  }));
-
-  router.get('/:userName/favourites', asyncHandler( async (req, res) => {
-    const userName = req.params.userName;
-    const user = await User.findByUserName(userName).populate('favourites');
-    res.status(200).json(user.favourites);
-  }));
-
 // Register OR authenticate a user
 router.post('/',asyncHandler( async (req, res, next) => {
     if (!req.body.username || !req.body.password) {
@@ -66,6 +48,31 @@ router.post('/',asyncHandler( async (req, res, next) => {
           }
         });
       }
+  }));
+
+  //Favourite
+//Add a favourite. No Error Handling Yet. Can add duplicates too!
+router.post('/:userName/favourites', asyncHandler(async (req, res) => {
+    const newFavourite = req.body.id;
+    const userName = req.params.userName;
+    console.log("HERE")
+    console.log(req.body.id)
+    
+   
+    const movie = await movieModel.findByMovieDBId(newFavourite);
+    console.log(movie)
+    // console.log(movieModel.findByMovieDBId(newFavourite))
+
+    const user = await User.findByUserName(userName);
+    await user.favourites.push(movie._id);
+    await user.save(); 
+    res.status(201).json(user); 
+  }));
+
+  router.get('/:userName/favourites', asyncHandler( async (req, res) => {
+    const userName = req.params.userName;
+    const user = await User.findByUserName(userName).populate('favourites');
+    res.status(200).json(user.favourites);
   }));
 
 export default router;
